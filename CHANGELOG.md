@@ -6,6 +6,10 @@ All notable changes to this integration are documented here. The format follows
 
 Describe each change under `## [Unreleased]
 
+## [0.1.2] - 2026-10-19
+
+- Maintenance release, no functional change.
+
 ## [0.1.1] - 2026-10-19
 
 ` as you make it. The Release
@@ -40,5 +44,6 @@ the notes of the version's GitHub Release.
   Dependabot.
 - `SECURITY.md` and `CLAUDE.md`.
 
-[Unreleased]: https://github.com/prohand/gladys-zonneplan/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/prohand/gladys-zonneplan/compare/v0.1.2...HEAD
+[0.1.2]: https://github.com/prohand/gladys-zonneplan/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/prohand/gladys-zonneplan/releases/tag/v0.1.1
