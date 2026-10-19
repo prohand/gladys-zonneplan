@@ -4,7 +4,11 @@ All notable changes to this integration are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [semantic versioning](https://semver.org/), bumped by the Release workflow.
 
-Describe each change under `## [Unreleased]` as you make it. The Release
+Describe each change under `## [Unreleased]
+
+## [0.1.1] - 2026-10-19
+
+` as you make it. The Release
 workflow moves that section under the version it ships, and the section becomes
 the notes of the version's GitHub Release.
 
@@ -36,4 +40,5 @@ the notes of the version's GitHub Release.
   Dependabot.
 - `SECURITY.md` and `CLAUDE.md`.
 
-[Unreleased]: https://github.com/prohand/gladys-zonneplan/commits/main
+[Unreleased]: https://github.com/prohand/gladys-zonneplan/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/prohand/gladys-zonneplan/releases/tag/v0.1.1

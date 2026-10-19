@@ -1,6 +1,6 @@
 {
   "name": "gladys-zonneplan",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "description": "Gladys Assistant external integration for Zonneplan: dynamic energy prices, P1 meter, solar panels, home battery and charge point.",
   "type": "module",
