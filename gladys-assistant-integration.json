@@ -1,0 +1,789 @@
+{
+  "manifest_version": 1,
+  "type": "device",
+  "name": "Zonneplan",
+  "description": {
+    "en": "Zonneplan dynamic energy prices, P1 meter, solar panels, home battery and charge point.",
+    "fr": "Prix dynamiques Zonneplan, compteur P1, panneaux solaires, batterie et borne de recharge.",
+    "de": "Dynamische Zonneplan-Preise, P1-Zähler, Solaranlage, Heimspeicher und Ladestation.",
+    "es": "Precios dinámicos de Zonneplan, contador P1, paneles solares, batería y punto de recarga."
+  },
+  "version": "0.1.0",
+  "docker_image": "ghcr.io/prohand/gladys-zonneplan:0.1.0",
+  "gladys_version": ">=5.1.0",
+  "cover_image": "https://raw.githubusercontent.com/prohand/gladys-zonneplan/main/cover.png",
+  "categories": ["energy"],
+  "transports": ["cloud"],
+  "config_schema": [
+    {
+      "key": "intro",
+      "type": "section",
+      "label": {
+        "en": "Getting started",
+        "fr": "Pour commencer",
+        "de": "Erste Schritte",
+        "es": "Primeros pasos"
+      },
+      "description": {
+        "en": "Zonneplan has no password: it e-mails you a sign-in code. 1. Enter the e-mail address of your Zonneplan account below and save. 2. Click \"Send me a sign-in code\". 3. Type the code received by e-mail in \"Sign in with the code\". The devices of your account (prices, P1 meter, solar panels, battery, charge point) then appear in the Discovery tab.",
+        "fr": "Zonneplan n'a pas de mot de passe : il vous envoie un code de connexion par e-mail. 1. Saisissez ci-dessous l'adresse e-mail de votre compte Zonneplan et enregistrez. 2. Cliquez sur « M’envoyer un code de connexion ». 3. Saisissez le code reçu par e-mail dans « Se connecter avec le code ». Les appareils de votre compte (prix, compteur P1, panneaux solaires, batterie, borne) apparaissent ensuite dans l'onglet Découverte.",
+        "de": "Zonneplan hat kein Passwort: Es schickt dir einen Anmeldecode per E-Mail. 1. Gib unten die E-Mail-Adresse deines Zonneplan-Kontos ein und speichere. 2. Klicke auf „Anmeldecode senden“. 3. Gib den per E-Mail erhaltenen Code bei „Mit dem Code anmelden“ ein. Die Geräte deines Kontos (Preise, P1-Zähler, Solaranlage, Batterie, Ladestation) erscheinen dann im Tab „Entdecken“.",
+        "es": "Zonneplan no tiene contraseña: le envía un código de acceso por e-mail. 1. Introduzca abajo el e-mail de su cuenta Zonneplan y guarde. 2. Pulse «Enviarme un código de acceso». 3. Escriba el código recibido por e-mail en «Iniciar sesión con el código». Los dispositivos de su cuenta (precios, contador P1, paneles solares, batería, punto de recarga) aparecen luego en la pestaña Descubrimiento."
+      },
+      "links": [
+        {
+          "url": "https://www.zonneplan.nl",
+          "label": {
+            "en": "Zonneplan",
+            "fr": "Zonneplan",
+            "de": "Zonneplan",
+            "es": "Zonneplan"
+          }
+        },
+        {
+          "url": "https://github.com/prohand/gladys-zonneplan/blob/main/docs/en.md",
+          "label": {
+            "en": "Integration documentation",
+            "fr": "Documentation de l'intégration",
+            "de": "Dokumentation der Integration",
+            "es": "Documentación de la integración"
+          }
+        }
+      ]
+    },
+    {
+      "key": "email",
+      "type": "string",
+      "label": {
+        "en": "Zonneplan account e-mail",
+        "fr": "E-mail du compte Zonneplan",
+        "de": "E-Mail des Zonneplan-Kontos",
+        "es": "E-mail de la cuenta Zonneplan"
+      },
+      "description": {
+        "en": "The address you sign in to the Zonneplan app with. The sign-in code is sent there.",
+        "fr": "L'adresse avec laquelle vous vous connectez à l'application Zonneplan. Le code de connexion y est envoyé.",
+        "de": "Die Adresse, mit der du dich in der Zonneplan-App anmeldest. Der Anmeldecode wird dorthin geschickt.",
+        "es": "La dirección con la que inicia sesión en la app Zonneplan. El código de acceso se envía allí."
+      },
+      "placeholder": {
+        "en": "e.g. me@example.com",
+        "fr": "ex. moi@exemple.fr",
+        "de": "z. B. ich@beispiel.de",
+        "es": "p. ej. yo@ejemplo.es"
+      },
+      "required": true
+    },
+    {
+      "key": "price_interval",
+      "type": "select",
+      "label": {
+        "en": "Price slots",
+        "fr": "Créneaux de prix",
+        "de": "Preisintervalle",
+        "es": "Tramos de precio"
+      },
+      "description": {
+        "en": "Since October 2025 the market sets a price every quarter of an hour; Zonneplan also publishes hourly averages.",
+        "fr": "Depuis octobre 2025, le marché fixe un prix par quart d'heure ; Zonneplan publie aussi des moyennes horaires.",
+        "de": "Seit Oktober 2025 legt der Markt jede Viertelstunde einen Preis fest; Zonneplan veröffentlicht auch Stundenmittel.",
+        "es": "Desde octubre de 2025 el mercado fija un precio cada cuarto de hora; Zonneplan también publica medias horarias."
+      },
+      "required": false,
+      "default": "hourly",
+      "options": [
+        {
+          "value": "hourly",
+          "label": {
+            "en": "Hourly",
+            "fr": "Par heure",
+            "de": "Stündlich",
+            "es": "Por hora"
+          }
+        },
+        {
+          "value": "quarter_hourly",
+          "label": {
+            "en": "Every quarter of an hour",
+            "fr": "Par quart d'heure",
+            "de": "Viertelstündlich",
+            "es": "Por cuarto de hora"
+          }
+        }
+      ]
+    },
+    {
+      "key": "poll_frequency",
+      "type": "number",
+      "label": {
+        "en": "Refresh interval (s)",
+        "fr": "Intervalle de rafraîchissement (s)",
+        "de": "Aktualisierungsintervall (s)",
+        "es": "Intervalo de actualización (s)"
+      },
+      "description": {
+        "en": "How often the P1 meter, solar panels, battery and charge point are read, in seconds (one minute minimum). Zonneplan limits the number of calls: 300 s is what its app uses.",
+        "fr": "Fréquence de lecture du compteur P1, des panneaux, de la batterie et de la borne, en secondes (une minute minimum). Zonneplan limite le nombre d'appels : 300 s, c'est ce qu'utilise son application.",
+        "de": "Wie oft P1-Zähler, Solaranlage, Batterie und Ladestation gelesen werden, in Sekunden (mindestens eine Minute). Zonneplan begrenzt die Anzahl der Anfragen: 300 s nutzt auch die App.",
+        "es": "Cada cuánto se leen el contador P1, los paneles, la batería y el punto de recarga, en segundos (un minuto como mínimo). Zonneplan limita el número de consultas: 300 s es lo que usa su app."
+      },
+      "required": false,
+      "default": 300,
+      "min": 60,
+      "max": 3600
+    }
+  ],
+  "actions": [
+    {
+      "key": "request_code",
+      "label": {
+        "en": "Send me a sign-in code",
+        "fr": "M’envoyer un code de connexion",
+        "de": "Anmeldecode senden",
+        "es": "Enviarme un código de acceso"
+      },
+      "timeout_seconds": 30
+    },
+    {
+      "key": "submit_code",
+      "label": {
+        "en": "Sign in with the code",
+        "fr": "Se connecter avec le code",
+        "de": "Mit dem Code anmelden",
+        "es": "Iniciar sesión con el código"
+      },
+      "timeout_seconds": 90,
+      "fields": [
+        {
+          "key": "code",
+          "type": "string",
+          "label": {
+            "en": "Code received by e-mail",
+            "fr": "Code reçu par e-mail",
+            "de": "Per E-Mail erhaltener Code",
+            "es": "Código recibido por e-mail"
+          },
+          "placeholder": {
+            "en": "e.g. 123456",
+            "fr": "ex. 123456",
+            "de": "z. B. 123456",
+            "es": "p. ej. 123456"
+          },
+          "required": true
+        }
+      ]
+    },
+    {
+      "key": "test_connection",
+      "label": {
+        "en": "Test the connection",
+        "fr": "Tester la connexion",
+        "de": "Verbindung testen",
+        "es": "Probar la conexión"
+      },
+      "timeout_seconds": 30
+    },
+    {
+      "key": "sign_out",
+      "label": {
+        "en": "Sign out",
+        "fr": "Se déconnecter",
+        "de": "Abmelden",
+        "es": "Cerrar sesión"
+      },
+      "timeout_seconds": 30
+    }
+  ],
+  "scene_triggers": [
+    {
+      "key": "tariff_group_changed",
+      "label": {
+        "en": "Zonneplan tariff group changed",
+        "fr": "Tranche tarifaire Zonneplan changée",
+        "de": "Zonneplan-Tarifgruppe geändert",
+        "es": "Cambio de tramo tarifario Zonneplan"
+      },
+      "description": {
+        "en": "The new price slot is in another tariff group (low, normal or high).",
+        "fr": "Le nouveau créneau de prix est dans une autre tranche (basse, normale ou élevée).",
+        "de": "Das neue Preisintervall liegt in einer anderen Tarifgruppe (niedrig, normal oder hoch).",
+        "es": "El nuevo tramo de precio está en otro grupo tarifario (bajo, normal o alto)."
+      },
+      "fields": [
+        {
+          "key": "tariff_group",
+          "type": "multi_select",
+          "label": {
+            "en": "New tariff group",
+            "fr": "Nouvelle tranche",
+            "de": "Neue Tarifgruppe",
+            "es": "Nuevo tramo"
+          },
+          "options": [
+            {
+              "value": "low",
+              "label": { "en": "Low", "fr": "Basse", "de": "Niedrig", "es": "Bajo" }
+            },
+            {
+              "value": "normal",
+              "label": { "en": "Normal", "fr": "Normale", "de": "Normal", "es": "Normal" }
+            },
+            {
+              "value": "high",
+              "label": { "en": "High", "fr": "Élevée", "de": "Hoch", "es": "Alto" }
+            }
+          ]
+        }
+      ],
+      "variables": [
+        {
+          "key": "tariff_group",
+          "type": "string",
+          "label": {
+            "en": "New tariff group",
+            "fr": "Nouvelle tranche",
+            "de": "Neue Tarifgruppe",
+            "es": "Nuevo tramo"
+          }
+        },
+        {
+          "key": "previous_tariff_group",
+          "type": "string",
+          "label": {
+            "en": "Previous tariff group",
+            "fr": "Tranche précédente",
+            "de": "Vorherige Tarifgruppe",
+            "es": "Tramo anterior"
+          }
+        },
+        {
+          "key": "price",
+          "type": "number",
+          "label": {
+            "en": "Price per kWh (EUR)",
+            "fr": "Prix par kWh (EUR)",
+            "de": "Preis pro kWh (EUR)",
+            "es": "Precio por kWh (EUR)"
+          }
+        }
+      ]
+    },
+    {
+      "key": "negative_price_started",
+      "label": {
+        "en": "Zonneplan price below zero",
+        "fr": "Prix Zonneplan négatif",
+        "de": "Zonneplan-Preis unter null",
+        "es": "Precio Zonneplan negativo"
+      },
+      "description": {
+        "en": "The electricity price just went below zero: consuming now earns money.",
+        "fr": "Le prix de l'électricité vient de passer sous zéro : consommer maintenant rapporte.",
+        "de": "Der Strompreis ist gerade unter null gefallen: Jetzt verbrauchen bringt Geld.",
+        "es": "El precio de la luz acaba de bajar de cero: consumir ahora da dinero."
+      },
+      "variables": [
+        {
+          "key": "price",
+          "type": "number",
+          "label": {
+            "en": "Price per kWh (EUR)",
+            "fr": "Prix par kWh (EUR)",
+            "de": "Preis pro kWh (EUR)",
+            "es": "Precio por kWh (EUR)"
+          }
+        },
+        {
+          "key": "ends_at",
+          "type": "string",
+          "label": {
+            "en": "End of the slot (HH:mm)",
+            "fr": "Fin du créneau (HH:mm)",
+            "de": "Ende des Intervalls (HH:mm)",
+            "es": "Fin del tramo (HH:mm)"
+          }
+        }
+      ]
+    },
+    {
+      "key": "next_day_prices_available",
+      "label": {
+        "en": "Zonneplan prices of tomorrow published",
+        "fr": "Prix Zonneplan de demain publiés",
+        "de": "Zonneplan-Preise für morgen veröffentlicht",
+        "es": "Precios Zonneplan de mañana publicados"
+      },
+      "description": {
+        "en": "The electricity prices of the next day are known (usually in the afternoon).",
+        "fr": "Les prix de l'électricité du lendemain sont connus (en général l'après-midi).",
+        "de": "Die Strompreise des nächsten Tages sind bekannt (meist am Nachmittag).",
+        "es": "Se conocen los precios de la luz del día siguiente (normalmente por la tarde)."
+      },
+      "variables": [
+        {
+          "key": "date",
+          "type": "string",
+          "label": { "en": "Date", "fr": "Date", "de": "Datum", "es": "Fecha" }
+        },
+        {
+          "key": "cheapest_time",
+          "type": "string",
+          "label": {
+            "en": "Cheapest slot (HH:mm)",
+            "fr": "Créneau le moins cher (HH:mm)",
+            "de": "Günstigstes Intervall (HH:mm)",
+            "es": "Tramo más barato (HH:mm)"
+          }
+        },
+        {
+          "key": "cheapest_price",
+          "type": "number",
+          "label": {
+            "en": "Lowest price (EUR/kWh)",
+            "fr": "Prix le plus bas (EUR/kWh)",
+            "de": "Niedrigster Preis (EUR/kWh)",
+            "es": "Precio más bajo (EUR/kWh)"
+          }
+        },
+        {
+          "key": "most_expensive_time",
+          "type": "string",
+          "label": {
+            "en": "Most expensive slot (HH:mm)",
+            "fr": "Créneau le plus cher (HH:mm)",
+            "de": "Teuerstes Intervall (HH:mm)",
+            "es": "Tramo más caro (HH:mm)"
+          }
+        },
+        {
+          "key": "most_expensive_price",
+          "type": "number",
+          "label": {
+            "en": "Highest price (EUR/kWh)",
+            "fr": "Prix le plus haut (EUR/kWh)",
+            "de": "Höchster Preis (EUR/kWh)",
+            "es": "Precio más alto (EUR/kWh)"
+          }
+        },
+        {
+          "key": "average_price",
+          "type": "number",
+          "label": {
+            "en": "Average price (EUR/kWh)",
+            "fr": "Prix moyen (EUR/kWh)",
+            "de": "Durchschnittspreis (EUR/kWh)",
+            "es": "Precio medio (EUR/kWh)"
+          }
+        }
+      ]
+    },
+    {
+      "key": "charging_started",
+      "label": {
+        "en": "Zonneplan charging started",
+        "fr": "Recharge Zonneplan démarrée",
+        "de": "Zonneplan-Ladevorgang gestartet",
+        "es": "Recarga Zonneplan iniciada"
+      },
+      "description": {
+        "en": "A Zonneplan charge point started charging (planned, boost or solar).",
+        "fr": "Une borne Zonneplan a commencé à recharger (planifiée, immédiate ou solaire).",
+        "de": "Eine Zonneplan-Ladestation hat zu laden begonnen (geplant, sofort oder solar).",
+        "es": "Un punto de recarga Zonneplan ha empezado a cargar (planificada, inmediata o solar)."
+      },
+      "fields": [
+        {
+          "key": "device",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Charge point",
+            "fr": "Borne",
+            "de": "Ladestation",
+            "es": "Punto de recarga"
+          }
+        }
+      ],
+      "variables": [
+        {
+          "key": "power",
+          "type": "number",
+          "label": {
+            "en": "Charge power (W)",
+            "fr": "Puissance de recharge (W)",
+            "de": "Ladeleistung (W)",
+            "es": "Potencia de carga (W)"
+          }
+        },
+        {
+          "key": "session_energy",
+          "type": "number",
+          "label": {
+            "en": "Energy of the session (kWh)",
+            "fr": "Énergie de la session (kWh)",
+            "de": "Energie der Sitzung (kWh)",
+            "es": "Energía de la sesión (kWh)"
+          }
+        }
+      ]
+    },
+    {
+      "key": "charging_stopped",
+      "label": {
+        "en": "Zonneplan charging stopped",
+        "fr": "Recharge Zonneplan arrêtée",
+        "de": "Zonneplan-Ladevorgang beendet",
+        "es": "Recarga Zonneplan detenida"
+      },
+      "description": {
+        "en": "A Zonneplan charge point stopped charging (full, unplugged, paused or stopped).",
+        "fr": "Une borne Zonneplan a cessé de recharger (pleine, débranchée, en pause ou arrêtée).",
+        "de": "Eine Zonneplan-Ladestation lädt nicht mehr (voll, abgesteckt, pausiert oder gestoppt).",
+        "es": "Un punto de recarga Zonneplan ha dejado de cargar (lleno, desconectado, en pausa o parado)."
+      },
+      "fields": [
+        {
+          "key": "device",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Charge point",
+            "fr": "Borne",
+            "de": "Ladestation",
+            "es": "Punto de recarga"
+          }
+        }
+      ],
+      "variables": [
+        {
+          "key": "power",
+          "type": "number",
+          "label": {
+            "en": "Charge power (W)",
+            "fr": "Puissance de recharge (W)",
+            "de": "Ladeleistung (W)",
+            "es": "Potencia de carga (W)"
+          }
+        },
+        {
+          "key": "session_energy",
+          "type": "number",
+          "label": {
+            "en": "Energy of the session (kWh)",
+            "fr": "Énergie de la session (kWh)",
+            "de": "Energie der Sitzung (kWh)",
+            "es": "Energía de la sesión (kWh)"
+          }
+        }
+      ]
+    }
+  ],
+  "scene_actions": [
+    {
+      "key": "get_current_price",
+      "label": {
+        "en": "Read the Zonneplan price",
+        "fr": "Lire le prix Zonneplan",
+        "de": "Zonneplan-Preis lesen",
+        "es": "Leer el precio Zonneplan"
+      },
+      "description": {
+        "en": "The electricity price now and next, its tariff group and the cheapest slot of the day, for the next actions.",
+        "fr": "Le prix de l'électricité maintenant et ensuite, sa tranche et le créneau le moins cher du jour, pour les actions suivantes.",
+        "de": "Der Strompreis jetzt und danach, seine Tarifgruppe und das günstigste Intervall des Tages, für die nächsten Aktionen.",
+        "es": "El precio de la luz ahora y después, su tramo y el tramo más barato del día, para las acciones siguientes."
+      },
+      "timeout_seconds": 10,
+      "outputs": [
+        {
+          "key": "price",
+          "type": "number",
+          "label": {
+            "en": "Price now (EUR/kWh)",
+            "fr": "Prix actuel (EUR/kWh)",
+            "de": "Preis jetzt (EUR/kWh)",
+            "es": "Precio actual (EUR/kWh)"
+          }
+        },
+        {
+          "key": "next_price",
+          "type": "number",
+          "label": {
+            "en": "Next price (EUR/kWh)",
+            "fr": "Prix suivant (EUR/kWh)",
+            "de": "Nächster Preis (EUR/kWh)",
+            "es": "Precio siguiente (EUR/kWh)"
+          }
+        },
+        {
+          "key": "tariff_group",
+          "type": "string",
+          "label": {
+            "en": "Tariff group",
+            "fr": "Tranche tarifaire",
+            "de": "Tarifgruppe",
+            "es": "Tramo tarifario"
+          }
+        },
+        {
+          "key": "sustainability",
+          "type": "number",
+          "label": {
+            "en": "Sustainable energy (%)",
+            "fr": "Énergie durable (%)",
+            "de": "Nachhaltige Energie (%)",
+            "es": "Energía sostenible (%)"
+          }
+        },
+        {
+          "key": "cheapest_time_today",
+          "type": "string",
+          "label": {
+            "en": "Cheapest slot today (HH:mm)",
+            "fr": "Créneau le moins cher du jour (HH:mm)",
+            "de": "Günstigstes Intervall heute (HH:mm)",
+            "es": "Tramo más barato de hoy (HH:mm)"
+          }
+        },
+        {
+          "key": "cheapest_price_today",
+          "type": "number",
+          "label": {
+            "en": "Lowest price today (EUR/kWh)",
+            "fr": "Prix le plus bas du jour (EUR/kWh)",
+            "de": "Niedrigster Preis heute (EUR/kWh)",
+            "es": "Precio más bajo de hoy (EUR/kWh)"
+          }
+        }
+      ]
+    },
+    {
+      "key": "find_cheapest_period",
+      "label": {
+        "en": "Find the cheapest Zonneplan period",
+        "fr": "Trouver la période Zonneplan la moins chère",
+        "de": "Günstigsten Zonneplan-Zeitraum finden",
+        "es": "Buscar el periodo Zonneplan más barato"
+      },
+      "description": {
+        "en": "The cheapest run of consecutive slots of the given length, within the coming hours (for a dishwasher, a boiler, a car).",
+        "fr": "La suite de créneaux consécutifs la moins chère de la durée voulue, dans les heures à venir (lave-vaisselle, ballon, voiture).",
+        "de": "Die günstigste Folge aufeinanderfolgender Intervalle der gewünschten Dauer in den nächsten Stunden (Spülmaschine, Boiler, Auto).",
+        "es": "La serie de tramos consecutivos más barata de la duración pedida, en las próximas horas (lavavajillas, termo, coche)."
+      },
+      "timeout_seconds": 10,
+      "fields": [
+        {
+          "key": "duration_hours",
+          "type": "number",
+          "label": {
+            "en": "Duration (hours)",
+            "fr": "Durée (heures)",
+            "de": "Dauer (Stunden)",
+            "es": "Duración (horas)"
+          },
+          "required": true,
+          "default": 2,
+          "min": 0.25,
+          "max": 12
+        },
+        {
+          "key": "within_hours",
+          "type": "number",
+          "label": {
+            "en": "Within the next (hours)",
+            "fr": "Dans les prochaines (heures)",
+            "de": "Innerhalb der nächsten (Stunden)",
+            "es": "Dentro de las próximas (horas)"
+          },
+          "required": false,
+          "default": 24,
+          "min": 1,
+          "max": 48
+        }
+      ],
+      "outputs": [
+        {
+          "key": "found",
+          "type": "boolean",
+          "label": {
+            "en": "Period found",
+            "fr": "Période trouvée",
+            "de": "Zeitraum gefunden",
+            "es": "Periodo encontrado"
+          }
+        },
+        {
+          "key": "start_time",
+          "type": "string",
+          "label": {
+            "en": "Start (HH:mm)",
+            "fr": "Début (HH:mm)",
+            "de": "Beginn (HH:mm)",
+            "es": "Inicio (HH:mm)"
+          }
+        },
+        {
+          "key": "end_time",
+          "type": "string",
+          "label": {
+            "en": "End (HH:mm)",
+            "fr": "Fin (HH:mm)",
+            "de": "Ende (HH:mm)",
+            "es": "Fin (HH:mm)"
+          }
+        },
+        {
+          "key": "average_price",
+          "type": "number",
+          "label": {
+            "en": "Average price (EUR/kWh)",
+            "fr": "Prix moyen (EUR/kWh)",
+            "de": "Durchschnittspreis (EUR/kWh)",
+            "es": "Precio medio (EUR/kWh)"
+          }
+        },
+        {
+          "key": "starts_in_minutes",
+          "type": "number",
+          "label": {
+            "en": "Starts in (minutes)",
+            "fr": "Commence dans (minutes)",
+            "de": "Beginnt in (Minuten)",
+            "es": "Empieza en (minutos)"
+          }
+        },
+        {
+          "key": "starts_now",
+          "type": "boolean",
+          "label": {
+            "en": "Starts now",
+            "fr": "Commence maintenant",
+            "de": "Beginnt jetzt",
+            "es": "Empieza ahora"
+          }
+        }
+      ]
+    },
+    {
+      "key": "start_boost_charging",
+      "label": {
+        "en": "Zonneplan: charge now",
+        "fr": "Zonneplan : recharger maintenant",
+        "de": "Zonneplan: jetzt laden",
+        "es": "Zonneplan: cargar ahora"
+      },
+      "description": {
+        "en": "Start a boost charge on a charge point: full power now, whatever the price.",
+        "fr": "Lance une recharge immédiate sur une borne : pleine puissance tout de suite, quel que soit le prix.",
+        "de": "Startet ein Sofortladen an einer Ladestation: volle Leistung sofort, unabhängig vom Preis.",
+        "es": "Inicia una carga inmediata en un punto de recarga: plena potencia ya, sea cual sea el precio."
+      },
+      "timeout_seconds": 20,
+      "fields": [
+        {
+          "key": "device",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Charge point",
+            "fr": "Borne",
+            "de": "Ladestation",
+            "es": "Punto de recarga"
+          },
+          "required": true
+        }
+      ],
+      "outputs": [
+        {
+          "key": "sent",
+          "type": "boolean",
+          "label": {
+            "en": "Order sent",
+            "fr": "Ordre envoyé",
+            "de": "Befehl gesendet",
+            "es": "Orden enviada"
+          }
+        }
+      ]
+    },
+    {
+      "key": "stop_charging",
+      "label": {
+        "en": "Zonneplan: stop charging",
+        "fr": "Zonneplan : arrêter la recharge",
+        "de": "Zonneplan: Laden stoppen",
+        "es": "Zonneplan: parar la recarga"
+      },
+      "description": {
+        "en": "Stop the running charge of a charge point.",
+        "fr": "Arrête la recharge en cours d'une borne.",
+        "de": "Stoppt den laufenden Ladevorgang einer Ladestation.",
+        "es": "Detiene la carga en curso de un punto de recarga."
+      },
+      "timeout_seconds": 20,
+      "fields": [
+        {
+          "key": "device",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Charge point",
+            "fr": "Borne",
+            "de": "Ladestation",
+            "es": "Punto de recarga"
+          },
+          "required": true
+        }
+      ],
+      "outputs": [
+        {
+          "key": "sent",
+          "type": "boolean",
+          "label": {
+            "en": "Order sent",
+            "fr": "Ordre envoyé",
+            "de": "Befehl gesendet",
+            "es": "Orden enviada"
+          }
+        }
+      ]
+    }
+  ],
+  "widgets": [
+    {
+      "key": "energy_prices",
+      "label": {
+        "en": "Zonneplan prices",
+        "fr": "Prix Zonneplan",
+        "de": "Zonneplan-Preise",
+        "es": "Precios Zonneplan"
+      },
+      "description": {
+        "en": "Electricity price now and next, sustainable share, price curve and cheapest slot of the day.",
+        "fr": "Prix de l'électricité maintenant et ensuite, part durable, courbe des prix et créneau le moins cher.",
+        "de": "Strompreis jetzt und danach, nachhaltiger Anteil, Preiskurve und günstigstes Intervall des Tages.",
+        "es": "Precio de la luz ahora y después, parte sostenible, curva de precios y tramo más barato del día."
+      },
+      "icon": "zap",
+      "action_timeout_seconds": 30
+    },
+    {
+      "key": "zonneplan_overview",
+      "label": {
+        "en": "Zonneplan overview",
+        "fr": "Vue d'ensemble Zonneplan",
+        "de": "Zonneplan-Übersicht",
+        "es": "Resumen Zonneplan"
+      },
+      "description": {
+        "en": "Grid, solar, battery and charge point live, the connection, and the charge buttons.",
+        "fr": "Réseau, solaire, batterie et borne en direct, la connexion et les boutons de recharge.",
+        "de": "Netz, Solar, Batterie und Ladestation live, die Verbindung und die Ladetasten.",
+        "es": "Red, solar, batería y punto de recarga en directo, la conexión y los botones de carga."
+      },
+      "icon": "sun",
+      "action_timeout_seconds": 30
+    }
+  ]
+}
