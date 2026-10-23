@@ -8,8 +8,8 @@
     "de": "Dynamische Zonneplan-Preise, P1-Zähler, Solaranlage, Heimspeicher und Ladestation.",
     "es": "Precios dinámicos de Zonneplan, contador P1, paneles solares, batería y punto de recarga."
   },
-  "version": "0.1.2",
-  "docker_image": "ghcr.io/prohand/gladys-zonneplan:0.1.2",
+  "version": "0.1.3",
+  "docker_image": "ghcr.io/prohand/gladys-zonneplan:0.1.3",
   "gladys_version": ">=5.1.0",
   "cover_image": "https://raw.githubusercontent.com/prohand/gladys-zonneplan/main/cover.png",
   "categories": ["energy"],
