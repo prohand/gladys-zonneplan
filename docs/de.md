@@ -5,7 +5,7 @@ dynamischen Strom- und Gaspreise und die Geräte, die Zonneplan überwacht — P
 (Zonneplan Connect), Solaranlage, Heimspeicher (Nexus) und Ladestation.
 
 Sie spricht über das Internet mit den Servern von Zonneplan (**Cloud**): In deinem Netzwerk
-muss nichts installiert werden. Sie braucht **Gladys 5.1 oder neuer**.
+muss nichts installiert werden. Sie braucht **Gladys 5.3.0 oder neuer**.
 
 ## Anmelden
 

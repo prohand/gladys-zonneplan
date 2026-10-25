@@ -10,8 +10,8 @@ dependency: `@gladysassistant/integration-sdk`) for **Zonneplan**, the Dutch ene
 supplier with dynamic prices. It reads the account through the Zonneplan app API
 (`https://app-api.zonneplan.nl`, the API of the mobile app — there is no public API) and
 publishes one Gladys device per installation: electricity price, gas price, P1 meter,
-solar panels, home battery, charge point. Gladys 5.1+ adds scene triggers, scene actions
-and two dashboard widgets. Cloud only (`"transports": ["cloud"]`).
+solar panels, home battery, charge point. It adds scene triggers, scene actions and two
+dashboard widgets, and requires Gladys 5.3.0+. Cloud only (`"transports": ["cloud"]`).
 
 Started from the official template
 [GladysAssistant/integration-template-js](https://github.com/GladysAssistant/integration-template-js);
@@ -95,7 +95,8 @@ test/                        node --test, SDK fake Gladys + test/helpers/fakeZon
 - **Manifest.** Texts are multi-language objects `{ en, fr, de, es }` — `label`,
   `description`, `placeholder` alike. The catalog `description` holds 10 to 100
   characters per language. `test/manifest.test.js` ties the manifest to the code
-  (defaults, actions, scene and widget handlers): change both sides together.
+  (defaults, actions, scene and widget handlers, keywords, countries, catalog shelves);
+  `keywords` and `countries` need `gladys_version >=5.3.0`. Change both sides together.
 - **User-facing text** is in English, French, German and Spanish: action messages,
   statuses, widget texts (built with `src/i18n.js`), and `docs/en.md`, `docs/fr.md`,
   `docs/de.md`, `docs/es.md`, kept in sync.

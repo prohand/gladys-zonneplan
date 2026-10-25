@@ -5,7 +5,7 @@ dinámicos de la luz y del gas, y los equipos que Zonneplan supervisa — contad
 (Zonneplan Connect), paneles solares, batería doméstica (Nexus) y punto de recarga.
 
 Habla con los servidores de Zonneplan por Internet (**cloud**): no hay nada que instalar en
-su red. Necesita **Gladys 5.1 o posterior**.
+su red. Necesita **Gladys 5.3.0 o posterior**.
 
 ## Iniciar sesión
 

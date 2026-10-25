@@ -6,7 +6,7 @@ compteur P1 (Zonneplan Connect), panneaux solaires, batterie domestique (Nexus) 
 de recharge.
 
 Elle passe par les serveurs de Zonneplan sur Internet (**cloud**) : rien à installer sur
-votre réseau. Elle demande **Gladys 5.1 ou plus récent**.
+votre réseau. Elle demande **Gladys 5.3.0 ou plus récent**.
 
 ## Se connecter
 
