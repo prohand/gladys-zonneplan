@@ -9,7 +9,8 @@ charge point. Built on the official
 
 - **Cloud** integration (`"transports": ["cloud"]`): it talks to `app-api.zonneplan.nl`, the
   API of the Zonneplan app. Nothing to install on the network.
-- **Gladys 5.1+** (scene triggers, scene actions, dashboard widgets).
+- **Gladys 5.3.0+** (scene triggers, scene actions, dashboard widgets, catalog keywords and
+  countries).
 - Texts and documentation in **English, French, German and Spanish**.
 
 User documentation: [English](docs/en.md) · [Français](docs/fr.md) ·

@@ -24,8 +24,49 @@ test('version, image tag and package.json agree (the Release workflow bumps all 
   assert.equal(manifest.docker_image, `ghcr.io/prohand/gladys-zonneplan:${pkg.version}`);
 });
 
+// The minimum of the gladys_version range, as numbers (never a regex over digits).
+function minGladysVersion() {
+  const match = manifest.gladys_version.match(/>=\s*(\d+)\.(\d+)\.(\d+)/);
+  assert.ok(match, 'gladys_version must declare a minimum version');
+  return match.slice(1).map(Number);
+}
+
+function isAtLeast(version, required) {
+  for (let i = 0; i < required.length; i += 1) {
+    if (version[i] !== required[i]) {
+      return version[i] > required[i];
+    }
+  }
+  return true;
+}
+
 test('the capability fields require Gladys 5.1.0 or later', () => {
-  assert.match(manifest.gladys_version, /^>=\s*5\.(?:[1-9]|\d{2,})\./);
+  assert.ok(isAtLeast(minGladysVersion(), [5, 1, 0]), manifest.gladys_version);
+});
+
+test('keywords and countries require Gladys 5.3.0 or later', () => {
+  // An older core rejects the whole manifest over a field it does not know.
+  assert.ok('keywords' in manifest || 'countries' in manifest);
+  assert.ok(isAtLeast(minGladysVersion(), [5, 3, 0]), manifest.gladys_version);
+});
+
+test('keywords: 1 to 10 unique search terms of 2 to 30 characters', () => {
+  const { keywords } = manifest;
+  assert.ok(Array.isArray(keywords) && keywords.length >= 1 && keywords.length <= 10);
+  for (const keyword of keywords) {
+    assert.equal(typeof keyword, 'string');
+    const length = keyword.trim().length;
+    assert.ok(length >= 2 && length <= 30, `keyword "${keyword}": ${length} characters`);
+  }
+  const normalized = keywords.map((keyword) => keyword.trim().toLowerCase());
+  assert.equal(new Set(normalized).size, normalized.length, 'keywords must be unique');
+});
+
+test('countries: Zonneplan only supplies the Netherlands', () => {
+  assert.deepEqual(manifest.countries, ['NL']);
+  for (const country of manifest.countries) {
+    assert.match(country, /^[A-Z]{2}$/);
+  }
 });
 
 test('Zonneplan is a cloud service: the transport is cloud only', () => {
@@ -47,6 +88,10 @@ test('the catalog shelves are known keys', () => {
     'notifications',
     'assistants',
     'services',
+    'transport',
+    'vehicles',
+    'servers',
+    'leisure',
   ];
   assert.ok(manifest.categories.length >= 1 && manifest.categories.length <= 3);
   for (const category of manifest.categories) {

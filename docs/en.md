@@ -5,7 +5,7 @@ the dynamic electricity and gas prices, and the equipment Zonneplan monitors —
 (Zonneplan Connect), solar panels, home battery (Nexus) and charge point.
 
 It talks to Zonneplan's servers over the internet (**cloud**): nothing to install on your
-network. It needs **Gladys 5.1 or later**.
+network. It needs **Gladys 5.3.0 or later**.
 
 ## Sign in
 

@@ -10,6 +10,16 @@ the notes of the version's GitHub Release.
 
 ## [Unreleased]
 
+### Added
+
+- Catalog search keywords (Nexus, EPEX, day-ahead, laadpaal, thuisbatterij…), the country
+  served (the Netherlands) and a second catalog shelf, Vehicles, for the charge point.
+
+### Changed
+
+- Gladys 5.3.0 or later is now required.
+- Updated the Gladys SDK to 0.16.
+
 ## [0.1.3] - 2026-10-23
 
 - Maintenance release, no functional change.
